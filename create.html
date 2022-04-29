@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Tuvote - verifiable voting</title>
+
+        <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^2.0/dist/tailwind.min.css">
+    </head>
+    <body>
+        <div id="header"></div>
+
+        <div class="lg:flex">
+            <div class="xl:max-w-screen-sm">
+
+                <div class="mt-10 px-12 sm:px-24 md:px-48 lg:px-12 lg:mt-16 xl:px-24 xl:max-w-2xl">
+                    <h2 class="text-center text-4xl text-indigo-900 font-display font-semibold lg:text-left xl:text-5xl
+                    xl:text-bold" id="titleLogin">Create poll</h2>
+                    <div class="mt-12">
+                        <div>
+                            <div class="flex justify-between items-center">
+                                <div class="text-sm font-bold text-gray-700 tracking-wide">
+                                    Poll question
+                                </div>
+                            </div>
+                            <input class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500" type="text" placeholder="Poll question" id="pollQuestion">
+                        </div>
+
+                        <div class="mt-8" id="answersContainer">
+                            <div class="flex justify-between items-center">
+                                <div class="text-sm font-bold text-gray-700 tracking-wide">
+                                    Answers
+                                </div>
+                            </div>
+                            <input class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500" type="text" placeholder="Answer" name="answers[]">
+                            <input class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500" type="text" placeholder="Answer" name="answers[]">
+                        </div>
+                        <div class="mt-6 text-sm font-display font-semibold text-gray-700 text-center" id="signupParagraph">
+                            <a class="cursor-pointer text-indigo-600 hover:text-indigo-800" onclick="addAnswerHtml()">Add answer +</a>
+                        </div>     
+
+                        <div class="mt-10">
+                            <button class="bg-indigo-500 text-gray-100 p-4 w-full rounded-full tracking-wide
+                            font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-indigo-600
+                            shadow-lg" onclick="addPoll()">
+                                Create poll
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script type="text/javascript" src="./js/bsv.bundle.js"></script>
+        <script type="text/javascript" src="./js/txforge.min.js"></script>
+        <script type="text/javascript" src="./js/univrse.min.js"></script>
+        <script type="text/javascript" src="./js/script.js"></script>
+        <script type="text/javascript">
+            loadHeader()
+            loadFooter()
+
+            getUserData();
+            if (!userData || !userData.address) {
+                location.href = './index.html';
+            }
+
+            const pollQuestion = document.getElementById('pollQuestion');
+            var answers = document.getElementsByName('answers[]');
+            var answersContainer = document.getElementById('answersContainer');
+
+            function addPoll() {
+                if (pollQuestion.value && answers && answers.length > 1) {
+                  stringToHash = pollQuestion.value
+                  hash(stringToHash).then((hex) => {
+                    return hex
+                  })
+                  .then ((hex) => {
+                    checkHash(hex)
+                    .then(json => {
+                      if (json.length === 0) {
+                        saveHash(hex, stringToHash)
+                      }
+                    })
+                    for (let i = 0; i < answers.length; i++) {
+                      let answerString = answers[i].value;
+                      hash(answerString).then((answerHex) => {
+                        return answerHex
+                      })
+                      .then ((answerHex) => {
+                        checkHash(answerHex)
+                        .then(json => {
+                          if (json.length === 0) {
+                            saveHash(answerHex, answers[i].value)
+                          }
+                          saveLink(answerHex, hex, "answer")
+                        })
+                      })
+                    }
+
+                    location.href = './view.html?hash=' + hex + '&address=' + userData.address;
+                  })
+                }
+            }
+            
+            function addAnswerHtml() {
+                var newAnswerHtml = `<input class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500" type="text" placeholder="Answer" name="answers[]">`
+                answersContainer.innerHTML += newAnswerHtml;
+            }
+        </script>
+    </body>
+</html>

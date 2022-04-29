@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Tuvote - verifiable voting</title>
+
+		<link rel="stylesheet" href="https://unpkg.com/tailwindcss@^2.0/dist/tailwind.min.css">
+    </head>
+    <body>
+         <div id="header"></div>
+
+        <div class="lg:flex">
+            <div class="xl:max-w-screen-sm">
+
+                <div class="mt-10 px-12 sm:px-24 md:px-48 lg:px-12 lg:mt-16 xl:px-24 xl:max-w-2xl">
+                    <div class="mt-12">
+                        <div class="mt-10">
+                        	<a href="create.html">
+                            <button class="bg-indigo-500 text-gray-100 p-4 w-full rounded-full tracking-wide
+                            font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-indigo-600
+                            shadow-lg" id="btnLogin">
+                                Create new poll
+                            </button>
+	                        </a>
+                        </div>
+
+                        <div class="mt-12 text-sm font-display font-semibold text-gray-700 text-center" id="signupParagraph">
+                            or
+                        </div>
+
+                        <div>
+                            <input class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500" type="text" placeholder="Poll identifier" id="pollId">
+                            <input class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500" type="text" placeholder="Poll author" id="pollAuthor">
+                        </div>
+                        <div class="mt-2">
+                            <button class="bg-indigo-500 text-gray-100 p-4 w-full rounded-full tracking-wide
+                            font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-indigo-600
+                            shadow-lg" id="btnCheckPoll">
+                                Check poll
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script type="text/javascript" src="./js/bsv.bundle.js"></script>
+        <script type="text/javascript" src="./js/txforge.min.js"></script>
+        <script type="text/javascript" src="./js/univrse.min.js"></script>
+        <script type="text/javascript" src="./js/script.js"></script>
+        <script type="text/javascript">
+            loadHeader()
+            loadFooter()
+
+            getUserData();
+            if (!userData || !userData.address) {
+                location.href = './index.html';
+            }
+
+            const pollId = document.getElementById('pollId');
+            const pollAuthor = document.getElementById('pollAuthor');
+            const btnCheckPoll = document.getElementById('btnCheckPoll');
+            
+            pollAuthor.addEventListener("keypress", function(event) {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                btnCheckPoll.click();
+              }
+            });
+
+            btnCheckPoll.addEventListener('click', function handleClick() {
+              if (pollId.value) {
+
+	            location.href = './view.html?hash=' + pollId.value + '&address=' + pollAuthor.value;
+              }
+            });            
+        </script>
+    </body>
+</html>

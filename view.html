@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Tuvote - verifiable voting</title>
+
+        <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^2.0/dist/tailwind.min.css">
+    </head>
+    <body>
+        <div id="header"></div>
+
+        <div class="lg:flex">
+            <div class="xl:max-w-screen-sm">
+
+                <div class="mt-10 px-12 sm:px-24 md:px-48 lg:px-12 lg:mt-16 xl:px-24 xl:max-w-2xl">
+                    <h2 class="text-center text-4xl text-indigo-900 font-display font-semibold lg:text-left xl:text-5xl
+                    xl:text-bold" id="pollQuestion"></h2>
+                    <div class="mt-12">
+                        <div>
+                            <div class="flex justify-between items-center">
+                                <div class="text-sm font-bold text-gray-700 tracking-wide" id="address"></div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8" id="answersContainer"></div>
+
+                        <div class="mt-8">
+                            <div class="flex flex-col">
+                              <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
+                                  <div class="overflow-hidden">
+                                    <table class="min-w-full">
+                                      <thead class="border-b">
+                                        <tr>
+                                          <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+                                            Results
+                                          </th>
+                                          <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+                                          </th>
+                                        </tr>
+                                      </thead>
+                                      <tbody id="resultsContainer">
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="./js/bsv.bundle.js"></script>
+        <script type="text/javascript" src="./js/txforge.min.js"></script>
+        <script type="text/javascript" src="./js/univrse.min.js"></script>
+        <script type="text/javascript" src="./js/script.js"></script>
+        <script type="text/javascript">
+            loadHeader()
+            loadFooter()
+
+            getUserData();
+            if (!userData || !userData.address) {
+                location.href = './index.html';
+            }
+
+			const url = new URL(window.location.href)
+			const params = new URLSearchParams(url.search);
+			hashParam = params.get('hash')
+			addressParam = params.get('address')
+            if (!hashParam || !addressParam) {
+                location.href = './index_logged.html';
+            }
+
+
+            let pollQuestion = document.getElementById('pollQuestion');
+            let address = document.getElementById('address');
+            let answersContainer = document.getElementById('answersContainer');
+            let resultsContainer = document.getElementById('resultsContainer')
+            let answers = []
+            let answersCount = []
+            let answersCountAll = 0
+
+            main()
+
+            async function main() {
+	            let records = await getPolls([hashParam])
+                let record = records[0]
+	            pollQuestion.innerHTML += record.record;
+	            address.innerHTML += "Author: " + addressParam;
+	            answers = await getAnswers(hashParam, addressParam)
+
+	            let answersArray = []
+	            for (let i = 0; i < answers.length; i++) {
+	                answersArray.push(answers[i].string)
+		        }
+
+	            let castedVote = await getUserAnswer(hashParam, userData.address, answersArray)
+                await populateResults()
+                populateAnswers(castedVote)
+	        }
+
+            function vote(answer) {
+                saveEval(hashParam, answer)
+                let castedVote = answer
+                populateAnswers(castedVote)
+            }
+
+            function populateAnswers(castedVote) {
+                answersContainer.innerHTML = ""
+                for (let i = 0; i < answers.length; i++) {
+                    let bgButton = "bg-indigo-500"
+                    if (castedVote === answers[i].string)
+                        bgButton = "bg-indigo-800"
+
+                    var answerButtonHtml = `
+                        <div class="mt-2">
+                            <button class="${bgButton} text-gray-100 p-4 w-full rounded-full tracking-wide
+                            font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-indigo-600
+                            shadow-lg" onclick="vote('${answers[i].string}')">
+                                ${answers[i].string}
+                            </button>
+                        </div>`
+                    answersContainer.innerHTML += answerButtonHtml;
+                }
+            }
+
+            async function populateResults() {
+                return new Promise(async function(resolve, reject) {
+
+                    for (let i = 0; i < answers.length; i++) {
+                        answersCount[i] = await getAnswerCount(hashParam, answers[i].string)
+                        answersCountAll += answersCount[i]
+                    }
+
+                    for (let i = 0; i < answers.length; i++) {
+                        let answersCountPercent = parseInt((answersCount[i]*100)/answersCountAll) 
+                        var resultsRowHTML = `<tr class="border-b">
+                                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">${answers[i].string}</td>
+                                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">${answersCountPercent}% (${answersCount[i]} votes)</td>
+                        </tr>`
+                        resultsContainer.innerHTML += resultsRowHTML;
+                    }
+
+                    resolve(null)
+                })
+            }
+        </script>
+    </body>
+</html>

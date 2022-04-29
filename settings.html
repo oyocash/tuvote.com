@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Tuvote - profile</title>
+
+        <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^2.0/dist/tailwind.min.css">
+    </head>
+    <body>
+        <div id="header"></div>
+
+
+        <div class="lg:flex">
+            <div class="xl:max-w-screen-sm">
+
+                <div class="mt-10 px-12 sm:px-24 md:px-48 lg:px-12 lg:mt-16 xl:px-24 xl:max-w-2xl">
+                    <h2 class="text-center text-4xl text-indigo-900 font-display font-semibold lg:text-left xl:text-5xl
+                    xl:text-bold">Settings</h2>
+                    <div class="mt-12">
+                        <p class="text-gray-800 text-sm">Private key: <span class="text-xm" id="privateKey"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="./js/bsv.bundle.js"></script>
+        <script type="text/javascript" src="./js/txforge.min.js"></script>
+        <script type="text/javascript" src="./js/univrse.min.js"></script>
+        <script type="text/javascript" src="./js/script.js"></script>
+        <script type="text/javascript">
+            loadHeader()
+            loadFooter()
+
+            getUserData();
+            if (!userData || !userData.address) {
+                location.href = './index.html';
+            }
+
+            let privateKey = document.getElementById('privateKey')
+
+            main()
+
+            async function main() {
+                privateKey.innerHTML = userData.pk
+	        }
+        </script>
+    </body>
+</html>
