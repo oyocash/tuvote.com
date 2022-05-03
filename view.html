@@ -62,11 +62,12 @@
             loadFooter()
 
             getUserData();
+
+            const url = new URL(window.location.href)
             if (!userData || !userData.address) {
-                location.href = './index.html';
+                location.href = './index.html?path=' + url.pathname + url.search;
             }
 
-			const url = new URL(window.location.href)
 			const params = new URLSearchParams(url.search);
 			hashParam = params.get('hash')
 			addressParam = params.get('address')
@@ -136,7 +137,10 @@
                     }
 
                     for (let i = 0; i < answers.length; i++) {
-                        let answersCountPercent = parseInt((answersCount[i]*100)/answersCountAll) 
+                        let answersCountPercent = 0
+                        if (answersCountAll) {
+                            answersCountPercent = parseInt((answersCount[i]*100)/answersCountAll)
+                        }
                         var resultsRowHTML = `<tr class="border-b">
                                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">${answers[i].string}</td>
                                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">${answersCountPercent}% (${answersCount[i]} votes)</td>

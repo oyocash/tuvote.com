@@ -55,8 +55,9 @@
             loadFooter()
 
             getUserData();
+            const url = new URL(window.location.href)
             if (!userData || !userData.address) {
-                location.href = './index.html';
+                location.href = './index.html?path=' + url.pathname + url.search;
             }
 
             const pollId = document.getElementById('pollId');

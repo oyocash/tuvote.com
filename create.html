@@ -60,8 +60,9 @@
             loadFooter()
 
             getUserData();
+            const url = new URL(window.location.href)
             if (!userData || !userData.address) {
-                location.href = './index.html';
+                location.href = './index.html?path=' + url.pathname + url.search;
             }
 
             const pollQuestion = document.getElementById('pollQuestion');
@@ -101,7 +102,7 @@
                     createButton.innerHTML = `Creating...`
                     setTimeout(function(){
                         location.href = './view.html?hash=' + hex + '&address=' + userData.address;
-                    },3000);
+                    },5000);
                   })
                 }
             }

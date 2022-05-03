@@ -46,11 +46,11 @@
             loadFooter()
 
             getUserData();
+            const url = new URL(window.location.href)
             if (!userData || !userData.address) {
-                location.href = './index.html';
+                location.href = './index.html?path=' + url.pathname + url.search;
             }
 
-			const url = new URL(window.location.href)
 			const params = new URLSearchParams(url.search);
 			addressParam = params.get('address')
             if (!addressParam)
