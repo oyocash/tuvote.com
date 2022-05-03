@@ -282,23 +282,32 @@ function checkHash(hash) {
 }
 
 async function saveEval(hex, value) {
-  let dataToPush = ["eval", "0x" + hex, value]
-  requestUTXO().then ((data) => {
-    buildForge(data, dataToPush, null, null, "Evaluated successfully")
+  return new Promise(function(resolve, reject) {
+    let dataToPush = ["eval", "0x" + hex, value]
+    requestUTXO().then ((data) => {
+      buildForge(data, dataToPush, null, null, "Evaluated successfully")
+      resolve(0)
+    })
   })
 }
 
 async function saveHash(hex, string) {
-  let dataToPush = ["hash", "0x" + hex, string]
-  requestUTXO().then ((data) => {
-    buildForge(data, dataToPush, null, null, "Record added")
+  return new Promise(function(resolve, reject) {
+    let dataToPush = ["hash", "0x" + hex, string]
+    requestUTXO().then ((data) => {
+      buildForge(data, dataToPush, null, null, "Record added")
+      resolve(0)
+    })
   })
 }
 
 async function saveLink(point, direction, relation) {
-  let dataToPush = ["link", "0x" + point, "0x" + direction, relation]
-  requestUTXO().then ((data) => {
-    buildForge(data, dataToPush, null, null, "Comment added")
+  return new Promise(function(resolve, reject) {
+    let dataToPush = ["link", "0x" + point, "0x" + direction, relation]
+    requestUTXO().then ((data) => {
+      buildForge(data, dataToPush, null, null, "Comment added")
+      resolve(0)
+    })
   })
 }
 

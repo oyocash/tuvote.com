@@ -70,40 +70,28 @@
             var answers = document.getElementsByName('answers[]');
             var answersContainer = document.getElementById('answersContainer');
 
-            function addPoll() {
+            async function addPoll() {
                 if (pollQuestion.value && answers && answers.length > 1) {
-                  stringToHash = pollQuestion.value
-                  hash(stringToHash).then((hex) => {
-                    return hex
-                  })
-                  .then ((hex) => {
-                    checkHash(hex)
-                    .then(json => {
-                      if (json.length === 0) {
-                        saveHash(hex, stringToHash)
-                      }
-                    })
-                    for (let i = 0; i < answers.length; i++) {
-                      let answerString = answers[i].value;
-                      hash(answerString).then((answerHex) => {
-                        return answerHex
-                      })
-                      .then ((answerHex) => {
-                        checkHash(answerHex)
-                        .then(json => {
-                          if (json.length === 0) {
-                            saveHash(answerHex, answers[i].value)
-                          }
-                          saveLink(answerHex, hex, "answer")
-                        })
-                      })
-                    }
                     createButton.disabled = true;
                     createButton.innerHTML = `Creating...`
-                    setTimeout(function(){
-                        location.href = './view.html?hash=' + hex + '&address=' + userData.address;
-                    },5000);
-                  })
+
+                    stringToHash = pollQuestion.value
+                    let hex = await hash(stringToHash)
+                    let json = await checkHash(hex)
+                    if (json.length === 0) {
+                      await saveHash(hex, stringToHash)
+                    }
+
+                    for (let i = 0; i < answers.length; i++) {
+                      let answerString = answers[i].value;
+                      let answerHex = await hash(answerString)
+                      let json = await checkHash(answerHex)
+                      if (json.length === 0) {
+                        await saveHash(answerHex, answers[i].value)
+                      }
+                      await saveLink(answerHex, hex, "answer")
+                    }
+                    location.href = './view.html?hash=' + hex + '&address=' + userData.address;
                 }
             }
             
