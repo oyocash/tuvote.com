@@ -83,6 +83,13 @@
                 location.href = './index_logged.html';
             }
 
+            const url = new URL(window.location.href)
+            const params = new URLSearchParams(url.search);
+            let path = params.get('path')
+            if (!path) {
+                path = './index_logged.html'
+            }
+
             const formUsername = document.getElementById('formUsername');
             const formPassword = document.getElementById('formPassword');
             const titleLogin = document.getElementById('titleLogin');
@@ -115,7 +122,7 @@
 
             btnLogin.addEventListener('click', function handleClick() {
               loginUP(formUsername.value, formPassword.value);
-              location.href = './index_logged.html';
+              location.href = path;
             });
         </script>
     </body>
