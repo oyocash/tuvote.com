@@ -88,6 +88,9 @@
             let path = params.get('path')
             if (!path) {
                 path = './index_logged.html'
+            } else {
+                path = path.replaceAll(":", "&");
+                path = "." + path
             }
 
             const formUsername = document.getElementById('formUsername');

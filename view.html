@@ -65,7 +65,8 @@
 
             const url = new URL(window.location.href)
             if (!userData || !userData.address) {
-                location.href = './index.html?path=' + url.pathname + url.search;
+                let search = url.search.replace(/&/g, ":");
+                location.href = './index.html?path=' + url.pathname + search;
             }
 
 			const params = new URLSearchParams(url.search);
