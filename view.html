@@ -103,10 +103,9 @@
                 populateAnswers(castedVote)
 	        }
 
-            function vote(answer) {
-                saveEval(hashParam, answer)
-                let castedVote = answer
-                populateAnswers(castedVote)
+            async function vote(answer) {
+                await saveEval(hashParam, answer)
+                location.reload();
             }
 
             function populateAnswers(castedVote) {
