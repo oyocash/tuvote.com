@@ -62,13 +62,11 @@
             loadFooter()
 
             getUserData();
-
-            const url = new URL(window.location.href)
             if (!userData || !userData.address) {
-                let search = url.search.replace(/&/g, ":");
-                location.href = './index.html?path=' + url.pathname + search;
+                toogleMenu()
             }
 
+            const url = new URL(window.location.href)
 			const params = new URLSearchParams(url.search);
 			hashParam = params.get('hash')
 			addressParam = params.get('address')
@@ -104,6 +102,11 @@
 	        }
 
             async function vote(answer) {
+                if (!userData || !userData.address) {
+                    let search = url.search.replace(/&/g, ":");
+                    location.href = './index.html?path=' + url.pathname + search;
+                }
+
                 await saveEval(hashParam, answer)
                 location.reload();
             }
