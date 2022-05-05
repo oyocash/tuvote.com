@@ -12,9 +12,8 @@ let userData = {}
 function toogleMenu() {
     const navButton = document.getElementById("menu-button")
     const navMenu = document.getElementById("menu");
-    menu.classList.toggle('hidden');
+    navMenu.classList.toggle('hidden');
 }
-
 
 // loader
 async function fetchHtmlAsText(url) {
@@ -24,6 +23,12 @@ async function loadHeader() {
     const contentDiv = document.getElementById("header");
     if (contentDiv !== null) {
       contentDiv.innerHTML = await fetchHtmlAsText("/includes/header.html");
+    }
+}
+async function loadHeaderNotLogged() {
+    const contentDiv = document.getElementById("headerNotLogged");
+    if (contentDiv !== null) {
+      contentDiv.innerHTML = await fetchHtmlAsText("/includes/headerNotLogged.html");
     }
 }
 async function loadFooter() {

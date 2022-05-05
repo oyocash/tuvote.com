@@ -9,6 +9,7 @@
     </head>
     <body>
         <div id="header"></div>
+        <div id="headerNotLogged" class="display:none"></div>
 
         <div class="lg:flex">
             <div class="xl:max-w-screen-sm">
@@ -59,12 +60,18 @@
         <script type="text/javascript" src="./js/script.js"></script>
         <script type="text/javascript">
             loadHeader()
+            loadHeaderNotLogged()
             loadFooter()
 
             getUserData();
+
+            const loggedNav = document.getElementById("header")
+            const notLoggedNav = document.getElementById("headerNotLogged");
             if (!userData || !userData.address) {
-                toogleMenu()
+                loggedNav.style.display = 'none';
+                notLoggedNav.style.display = 'block';
             }
+
 
             const url = new URL(window.location.href)
 			const params = new URLSearchParams(url.search);
