@@ -179,6 +179,36 @@ async function getAnswerCount(hash, answer) {
   });
 }
 
+async function getPollEvals(hash, answers, addresses = null) {
+  return new Promise(function(resolve, reject) {
+    var params = {}
+    params.hashes = [hash]
+    params.values = answers
+    if (addresses !== null && json !== "[]" && json.length !== 0) {
+      params.addresses = addresses
+    }
+
+    fetch(evalsURL, {
+      method: 'post',
+      body: JSON.stringify( params )  
+    })
+    .then(response => {
+       if (!response.ok) {
+           throw new Error("HTTP error " + response.status);
+       }
+       return response.json();
+    })
+    .then(json => {
+      if (json === null || json === "[]" || json.length === 0)
+      {
+        resolve(null)
+        return
+      }
+      resolve(json)
+    })
+  })
+}
+
 async function getUserAnswer(hash, address, answers) {
   return new Promise(function(resolve, reject) {
     var params = {}

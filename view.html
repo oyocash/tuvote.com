@@ -49,6 +49,31 @@
                               </div>
                             </div>
                         </div>
+
+                        <div class="mt-8">
+                            <div class="flex flex-col">
+                              <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
+                                  <div class="overflow-hidden">
+                                    <table class="min-w-full">
+                                      <thead class="border-b">
+                                        <tr>
+                                          <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+                                            Advanced
+                                          </th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr class="border-b">
+                                            <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap underline cursor-pointer" onclick="exportVotes()">Export votes</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -86,6 +111,7 @@
             let answersContainer = document.getElementById('answersContainer');
             let resultsContainer = document.getElementById('resultsContainer')
             let answers = []
+            let answersArray = []
             let answersCount = []
             let answersCountAll = 0
 
@@ -98,7 +124,6 @@
 	            address.innerHTML += "Author: " + addressParam;
 	            answers = await getAnswers(hashParam, addressParam)
 
-	            let answersArray = []
 	            for (let i = 0; i < answers.length; i++) {
 	                answersArray.push(answers[i].string)
 		        }
@@ -113,9 +138,34 @@
                     let search = url.search.replace(/&/g, ":");
                     location.href = './index.html?path=' + url.pathname + search;
                 }
-
                 await saveEval(hashParam, answer)
                 location.reload();
+            }
+
+            async function exportVotes() {
+                let votes = await getPollEvals(hashParam, answersArray)
+                let votesResult = []
+                for (let i = 0; i < votes.length; i++) {
+                    votesResult[i] = { address: votes[i].address, hash: votes[i].hash, value: votes[i].value, timestamp: votes[i].timestamp, envelope: votes[i].envelope }
+                }
+                
+                let filename = "votes.json"
+                let type = "text/plain"
+                var file = new Blob([JSON.stringify(votesResult)], {type: type});
+                if (window.navigator.msSaveOrOpenBlob) // IE10+
+                    window.navigator.msSaveOrOpenBlob(file, filename);
+                else { // Others
+                    var a = document.createElement("a"),
+                            url = URL.createObjectURL(file);
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(function() {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);  
+                    }, 0); 
+                }
             }
 
             function populateAnswers(castedVote) {

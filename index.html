@@ -62,14 +62,6 @@
         <script type="text/javascript" src="./js/univrse.min.js"></script>
         <script type="text/javascript" src="./js/script.js?0505202201"></script>
         <script type="text/javascript">
-            loadHeaderNotLogged()
-            loadFooter()
-
-            getUserData();
-            if (userData.address) {
-                location.href = './index_logged.html';
-            }
-
             const url = new URL(window.location.href)
             const params = new URLSearchParams(url.search);
             let path = params.get('path')
@@ -80,6 +72,13 @@
                 path = "." + path
             }
 
+            loadHeaderNotLogged()
+            loadFooter()
+
+            getUserData();
+            if (userData.address) {
+                location.href = './index_logged.html';
+            }
             const formUsername = document.getElementById('formUsername');
             const formPassword = document.getElementById('formPassword');
             const titleLogin = document.getElementById('titleLogin');
